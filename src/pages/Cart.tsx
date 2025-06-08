@@ -4,11 +4,7 @@ import type { CartItem } from '../types';
 
 const Cart = () => {
   const navigate = useNavigate();
-  const { cartItems, removeFromCart, updateQuantity } = useCart();
-
-  const total = cartItems.reduce((sum: number, item: CartItem) => 
-    sum + item.product.price * item.quantity, 0
-  );
+  const { cart, removeFromCart, updateQuantity, totalPrice } = useCart();
 
   const handleCheckout = () => {
     navigate('/checkout');
@@ -18,7 +14,7 @@ const Cart = () => {
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">Shopping Cart</h1>
       
-      {cartItems.length === 0 ? (
+      {cart.length === 0 ? (
         <div className="text-center py-8">
           <p className="text-gray-600">Your cart is empty</p>
           <button
@@ -31,8 +27,8 @@ const Cart = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="md:col-span-2">
-            {cartItems.map((item: CartItem) => (
-              <div key={item.id} className="flex items-center border-b py-4">
+            {cart.map((item: CartItem) => (
+              <div key={item.product._id} className="flex items-center border-b py-4">
                 <img
                   src={item.product.image}
                   alt={item.product.name}
@@ -43,7 +39,7 @@ const Cart = () => {
                   <p className="text-gray-600">${item.product.price}</p>
                   <div className="flex items-center mt-2">
                     <button
-                      onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                      onClick={() => updateQuantity(item.product._id, item.quantity - 1)}
                       className="px-2 py-1 border rounded"
                       disabled={item.quantity <= 1}
                     >
@@ -51,13 +47,13 @@ const Cart = () => {
                     </button>
                     <span className="mx-2">{item.quantity}</span>
                     <button
-                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                      onClick={() => updateQuantity(item.product._id, item.quantity + 1)}
                       className="px-2 py-1 border rounded"
                     >
                       +
                     </button>
                     <button
-                      onClick={() => removeFromCart(item.id)}
+                      onClick={() => removeFromCart(item.product._id)}
                       className="ml-4 text-red-600 hover:text-red-800"
                     >
                       Remove
@@ -78,7 +74,7 @@ const Cart = () => {
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span>Subtotal</span>
-                <span>${total.toFixed(2)}</span>
+                <span>${totalPrice.toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span>Shipping</span>
@@ -87,7 +83,7 @@ const Cart = () => {
               <div className="border-t pt-2 mt-2">
                 <div className="flex justify-between font-semibold">
                   <span>Total</span>
-                  <span>${total.toFixed(2)}</span>
+                  <span>${totalPrice.toFixed(2)}</span>
                 </div>
               </div>
             </div>

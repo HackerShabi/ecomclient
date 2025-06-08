@@ -20,7 +20,7 @@ const findBackendPort = async () => {
 // Create base axios instance
 const createApi = async () => {
   return axios.create({
-    baseURL: 'https://ecomclient-f1a1klwmz-hackershabis-projects.vercel.app/api',
+    baseURL: 'https://ecomclientbackend.onrender.com/api',
     headers: {
       'Content-Type': 'application/json',
     },

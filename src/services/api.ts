@@ -17,74 +17,133 @@ const findBackendPort = async () => {
   return 5001; // fallback to default port
 };
 
-const api = axios.create({
-  baseURL: `http://localhost:${await findBackendPort()}/api`,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  withCredentials: true
-});
+// Create base axios instance
+const createApi = async () => {
+  const port = await findBackendPort();
+  return axios.create({
+    baseURL: `http://localhost:${port}/api`,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    withCredentials: true
+  });
+};
 
-// Add a request interceptor
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+// Initialize API instance
+let apiInstance: ReturnType<typeof axios.create> | null = null;
 
-// Add a response interceptor
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      window.location.href = '/login';
-    }
-    return Promise.reject(error);
+// Function to get API instance
+export const getApi = async () => {
+  if (!apiInstance) {
+    apiInstance = await createApi();
+    
+    // Add request interceptor
+    apiInstance.interceptors.request.use(
+      (config) => {
+        const token = localStorage.getItem('token');
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+      },
+      (error) => {
+        return Promise.reject(error);
+      }
+    );
+
+    // Add response interceptor
+    apiInstance.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error.response?.status === 401) {
+          localStorage.removeItem('token');
+          window.location.href = '/login';
+        }
+        return Promise.reject(error);
+      }
+    );
   }
-);
+  return apiInstance;
+};
 
 // Auth API
 export const authAPI = {
-  login: (data: { email: string; password: string }) =>
-    api.post('/auth/login', data),
-  register: (data: { name: string; email: string; password: string }) =>
-    api.post('/auth/register', data),
-  getCurrentUser: () => api.get('/auth/me'),
+  login: async (data: { email: string; password: string }) => {
+    const api = await getApi();
+    return api.post('/auth/login', data);
+  },
+  register: async (data: { name: string; email: string; password: string }) => {
+    const api = await getApi();
+    return api.post('/auth/register', data);
+  },
+  getCurrentUser: async () => {
+    const api = await getApi();
+    return api.get('/auth/me');
+  },
 };
 
 // Products API
 export const productsAPI = {
-  getAll: () => api.get('/products'),
-  getById: (id: string) => api.get(`/products/${id}`),
-  create: (data: any) => api.post('/products', data),
-  update: (id: string, data: any) => api.put(`/products/${id}`, data),
-  delete: (id: string) => api.delete(`/products/${id}`),
+  getAll: async () => {
+    const api = await getApi();
+    return api.get('/products');
+  },
+  getById: async (id: string) => {
+    const api = await getApi();
+    return api.get(`/products/${id}`);
+  },
+  create: async (data: any) => {
+    const api = await getApi();
+    return api.post('/products', data);
+  },
+  update: async (id: string, data: any) => {
+    const api = await getApi();
+    return api.put(`/products/${id}`, data);
+  },
+  delete: async (id: string) => {
+    const api = await getApi();
+    return api.delete(`/products/${id}`);
+  },
 };
 
 // Orders API
 export const ordersAPI = {
-  getAll: () => api.get('/orders'),
-  getById: (id: string) => api.get(`/orders/${id}`),
-  create: (data: any) => api.post('/orders', data),
-  updateStatus: (id: string, status: string) =>
-    api.patch(`/orders/${id}/status`, { status }),
+  getAll: async () => {
+    const api = await getApi();
+    return api.get('/orders');
+  },
+  getById: async (id: string) => {
+    const api = await getApi();
+    return api.get(`/orders/${id}`);
+  },
+  create: async (data: any) => {
+    const api = await getApi();
+    return api.post('/orders', data);
+  },
+  updateStatus: async (id: string, status: string) => {
+    const api = await getApi();
+    return api.patch(`/orders/${id}/status`, { status });
+  },
 };
 
 // Cart API
 export const cartAPI = {
-  addItem: (data: any) => api.post('/cart', data),
-  removeItem: (id: string) => api.delete(`/cart/${id}`),
-  updateQuantity: (id: string, quantity: number) =>
-    api.patch(`/cart/${id}`, { quantity }),
-  getCart: () => api.get('/cart'),
+  addItem: async (data: any) => {
+    const api = await getApi();
+    return api.post('/cart', data);
+  },
+  removeItem: async (id: string) => {
+    const api = await getApi();
+    return api.delete(`/cart/${id}`);
+  },
+  updateQuantity: async (id: string, quantity: number) => {
+    const api = await getApi();
+    return api.patch(`/cart/${id}`, { quantity });
+  },
+  getCart: async () => {
+    const api = await getApi();
+    return api.get('/cart');
+  },
 };
 
-export default api; 
+export default getApi; 

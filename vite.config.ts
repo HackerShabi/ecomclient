@@ -9,7 +9,6 @@ const __dirname = dirname(__filename)
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   // Load env file based on `mode` in the current directory.
-  // Set the third parameter to '' to load all env regardless of the `VITE_` prefix.
   const env = loadEnv(mode, process.cwd(), '')
   const apiUrl = env.VITE_API_URL || 'http://localhost:5001'
 
@@ -34,6 +33,7 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: 'dist',
       sourcemap: mode !== 'production',
+      target: 'es2020',
       rollupOptions: {
         output: {
           manualChunks: {

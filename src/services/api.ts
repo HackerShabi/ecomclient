@@ -19,9 +19,8 @@ const findBackendPort = async () => {
 
 // Create base axios instance
 const createApi = async () => {
-  const port = await findBackendPort();
   return axios.create({
-    baseURL: `http://localhost:${port}/api`,
+    baseURL: 'https://ecomclient-f1a1klwmz-hackershabis-projects.vercel.app/api',
     headers: {
       'Content-Type': 'application/json',
     },

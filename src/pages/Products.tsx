@@ -7,7 +7,7 @@ import { productsAPI } from '../services/api';
 
 const Products = () => {
   const dispatch = useDispatch();
-  const { items: products, loading, error } = useSelector(
+  const { items: products = [], loading, error } = useSelector(
     (state: RootState) => state.products
   );
 
@@ -60,32 +60,23 @@ const Products = () => {
 
   if (error) {
     return (
-      <div className="text-center text-red-600">
-        <p>{error}</p>
+      <div className="text-center py-8">
+        <p className="text-red-600">{error}</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8">
-      {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="flex-1">
-          <input
-            type="text"
-            name="search"
-            placeholder="Search products..."
-            className="input"
-            value={filters.search}
-            onChange={handleFilterChange}
-          />
-        </div>
-        <div className="w-full sm:w-48">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+        <h1 className="text-2xl font-bold text-gray-900 mb-4 md:mb-0">All Products</h1>
+        
+        <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
           <select
             name="category"
-            className="input"
             value={filters.category}
             onChange={handleFilterChange}
+            className="input"
           >
             <option value="">All Categories</option>
             {categories.map((category) => (
@@ -94,15 +85,23 @@ const Products = () => {
               </option>
             ))}
           </select>
+          
+          <input
+            type="text"
+            name="search"
+            value={filters.search}
+            onChange={handleFilterChange}
+            placeholder="Search products..."
+            className="input"
+          />
         </div>
       </div>
 
-      {/* Products Grid */}
       <div className="grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
         {filteredProducts.map((product) => (
           <Link
-            key={product.id}
-            to={`/products/${product.id}`}
+            key={product._id}
+            to={`/products/${product._id}`}
             className="group"
           >
             <div className="w-full aspect-w-1 aspect-h-1 bg-gray-200 rounded-lg overflow-hidden xl:aspect-w-7 xl:aspect-h-8">

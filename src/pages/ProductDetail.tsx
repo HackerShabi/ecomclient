@@ -45,7 +45,7 @@ const ProductDetail = () => {
     if (!product) return;
     
     dispatch(addToCart({
-      id: product.id,
+      id: product._id,
       name: product.name,
       price: product.price,
       image: product.image,
@@ -63,10 +63,30 @@ const ProductDetail = () => {
     );
   }
 
-  if (error || !product) {
+  if (error) {
     return (
-      <div className="text-center text-red-600">
-        <p>{error || 'Product not found'}</p>
+      <div className="text-center py-8">
+        <p className="text-red-600">{error}</p>
+        <button
+          onClick={() => navigate('/products')}
+          className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        >
+          Back to Products
+        </button>
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-gray-600">Product not found</p>
+        <button
+          onClick={() => navigate('/products')}
+          className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        >
+          Back to Products
+        </button>
       </div>
     );
   }

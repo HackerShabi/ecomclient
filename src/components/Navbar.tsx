@@ -12,7 +12,7 @@ const navigation = [
 
 export default function Navbar() {
   const { isAuthenticated, user, logout } = useAuth();
-  const { cartItems } = useCart();
+  const { cart, totalItems } = useCart();
 
   return (
     <Disclosure as="nav" className="bg-white shadow">
@@ -38,29 +38,23 @@ export default function Navbar() {
                   ))}
                 </div>
               </div>
-              <div className="hidden sm:ml-6 sm:flex sm:items-center">
-                <Link
-                  to="/cart"
-                  className="relative rounded-full bg-white p-1 text-gray-400 hover:text-gray-500"
-                >
+              <div className="flex items-center">
+                <Link to="/cart" className="relative p-2 text-gray-600 hover:text-gray-900">
                   <ShoppingCartIcon className="h-6 w-6" />
-                  {cartItems.length > 0 && (
-                    <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-xs text-white">
-                      {cartItems.length}
+                  {totalItems > 0 && (
+                    <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-blue-600 rounded-full">
+                      {totalItems}
                     </span>
                   )}
                 </Link>
-
                 {isAuthenticated ? (
                   <Menu as="div" className="relative ml-3">
-                    <div>
-                      <Menu.Button className="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                        <span className="sr-only">Open user menu</span>
-                        <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
-                          {user?.name.charAt(0).toUpperCase()}
-                        </div>
-                      </Menu.Button>
-                    </div>
+                    <Menu.Button className="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                      <span className="sr-only">Open user menu</span>
+                      <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
+                        {user?.name?.[0]?.toUpperCase() || 'U'}
+                      </div>
+                    </Menu.Button>
                     <Transition
                       as={Fragment}
                       enter="transition ease-out duration-200"
@@ -114,13 +108,13 @@ export default function Navbar() {
                   <div className="ml-4 flex items-center space-x-4">
                     <Link
                       to="/login"
-                      className="text-gray-500 hover:text-gray-700"
+                      className="text-sm font-medium text-gray-700 hover:text-gray-900"
                     >
                       Sign in
                     </Link>
                     <Link
                       to="/register"
-                      className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                      className="text-sm font-medium text-white bg-blue-600 px-4 py-2 rounded-md hover:bg-blue-700"
                     >
                       Sign up
                     </Link>
